@@ -1,4 +1,4 @@
-import cozmo
+import cozmo[camera]
 from cozmo.util import degrees
 import time
 import sys
