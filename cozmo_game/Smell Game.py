@@ -35,6 +35,7 @@
 
 # Necessary imports
 import cozmo
+import pprint
 import sys
 
 
@@ -44,7 +45,7 @@ def play_game():
     # Save message strings
     pause = "\n\nPress any key to continue..."
 
-    greeting1 = "Excellent choice! Starting the Smelling Game...."
+    greeting = "Excellent choice! Starting the Smelling Game...."
 
     rules_overview = "The rules are simple. Up to two humans can compete with Cozmo in this game."\
                  "\n\nYou will choose a smell from the container and enter it's smell id number"\
@@ -56,7 +57,15 @@ def play_game():
                  "the right color appears, then the players should hit their " \
                  "cube!\n\nWhoever hits their cube on the right color first wins!\n\nThat's it!"
 
-    choose_prompt = "Please select a smell container from the bin. Check its smell id number, \n"
+    choose_prompt = "Please select a smell container from the bin. Check its smell id number and " \
+                    "compare it to the list below. \n"
+
+    # Smell Menu
+    Coffee = "1.\tCoffee"
+    Baby_Powder = "2.\tBaby Powder"
+    Citrus = "3.\tCitrus"
+    Cocoa = "4.\tCocoa"
+    Mint = "5.\tMint"
 
     smell_accepted = "Excellent!"
 
@@ -72,25 +81,42 @@ def play_game():
                  "cube as fast as possible!"
 
     # main greeting
-    print(greeting1)
+    print(greeting)
     print(rules_overview)
 
-    # smell prompt
-    print(choose_prompt)
-    smell = input("then enter that number here: ")
+    # smell prompt, smell menu
+    marker = 1        # controls loop
 
-    # validate smell id number loop
+    while marker == 1:
+        print(choose_prompt)
 
-    # loop
-    # loop
-    # loop
+        smell = input("Enter the appropriate id number here: ")
 
+        # validate smell id number loop
+
+
+
+    # smell validated, display prompts, then pause before start of game
     print(smell_accepted)
     print(smell_prompt)
     input(pause)
 
+    # display cube rules and prepare to run game
     print(cube_rules)
+    print(game_prompt)
     input(pause)
+
+    # run color match cube routine
+
+    # cube routine
+    # cube routine
+    # cube routine
+    # cube routine
+
+    # store score
+
+
+
 
     return
 
