@@ -1344,6 +1344,6 @@ if __name__ == '__main__':
       """)
   FLAGS, unparsed = parser.parse_known_args()
   should_continue = True
-  while (should_continue):
-    take_pictures()
+  #while (should_continue):
+   # take_pictures()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
