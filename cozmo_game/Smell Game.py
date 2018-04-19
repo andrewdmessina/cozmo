@@ -88,16 +88,35 @@ def play_game():
     # main greeting
     print(greeting)
     print(rules_overview)
+    print(pause)
 
-    # smell prompt, smell menu
-    marker = 1        # controls loop
+    print(choose_prompt)
+    pprint(smell_table)
 
+    # validate smell id number loop
     while marker == 1:
-        print(choose_prompt)
 
-        smell = input("Enter the appropriate id number here: ")
+        # smell prompt, smell menu
+        marker = 1  # controls loop
 
-        # validate smell id number loop
+        # grab user input
+        smell_id = input("Enter the appropriate id number here: ")
+
+        # if the string (hopefully a number) input by the user is a member of the smell_table
+        # dictionary, then it stores the smell name and its associated color for printing
+
+        if smell_table.has_key(smell_id) :
+            smell = smell_table[smell_id]
+            color = smell_table[smell_id[smell]]
+
+            #success! so break out of loop
+            marker = -1
+        # else it throws an error
+        else :
+            print("Sorry! That's not a valid entry! Please enter the number associated with the "
+                "appropriate smell. ")
+
+            # failure, proceeds to while loop start
 
 
 
