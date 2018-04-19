@@ -23,6 +23,7 @@ import time
 
 import numpy as np
 import tensorflow as tf
+import take_pictures
 
 def load_graph(model_file):
   graph = tf.Graph()
@@ -69,7 +70,7 @@ def load_labels(label_file):
   return label
 
 if __name__ == "__main__":
-  file_name = "./images/matt/matt-3.jpg"
+  file_name = take_pictures.tf_picture_taker()
   input_height = 224
   input_width = 224
   input_mean = 128
