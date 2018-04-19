@@ -60,12 +60,17 @@ def play_game():
     choose_prompt = "Please select a smell container from the bin. Check its smell id number and " \
                     "compare it to the list below. \n"
 
-    # Smell Menu
-    Coffee = "1.\tCoffee"
-    Baby_Powder = "2.\tBaby Powder"
-    Citrus = "3.\tCitrus"
-    Cocoa = "4.\tCocoa"
-    Mint = "5.\tMint"
+    # Smell Table - a dictionary of dictionaries of dictionaries
+    # To call smell, use smell_table[#]
+    # To call color, use smell_table[#[smell_name]]
+
+    smell_table = {
+        1:{"Coffee":"Light Orange"},
+        2:{"Baby Powder":"Light Blue"},
+        3:{"Citrus" : "Yellow"},
+        4:{"Cocoa" : "Orange"},
+        5:{"Mint":"Green"}
+    }
 
     smell_accepted = "Excellent!"
 
@@ -93,6 +98,7 @@ def play_game():
         smell = input("Enter the appropriate id number here: ")
 
         # validate smell id number loop
+
 
 
 
