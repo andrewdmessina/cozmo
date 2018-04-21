@@ -65,10 +65,10 @@ def play_game():
     # To call color, use smell_table[#[smell_name]]
 
     smell_table = {
-        1:{"Coffee":"Light Orange"},
-        2:{"Baby Powder":"Light Blue"},
+        1:{"Coffee":"Orange"},
+        2:{"Baby Powder":"Blue"},
         3:{"Citrus" : "Yellow"},
-        4:{"Cocoa" : "Orange"},
+        4:{"Vanilla" : "White"},
         5:{"Mint":"Green"}
     }
 
@@ -88,10 +88,13 @@ def play_game():
     # main greeting
     print(greeting)
     print(rules_overview)
-    print(pause)
+    input(pause)
 
     print(choose_prompt)
     pprint(smell_table)
+
+    smell = ""
+    color = ""
 
     # validate smell id number loop
     while marker == 1:
@@ -104,13 +107,13 @@ def play_game():
 
         # if the string (hopefully a number) input by the user is a member of the smell_table
         # dictionary, then it stores the smell name and its associated color for printing
-
         if smell_table.has_key(smell_id) :
             smell = smell_table[smell_id]
             color = smell_table[smell_id[smell]]
 
             #success! so break out of loop
             marker = -1
+
         # else it throws an error
         else :
             print("Sorry! That's not a valid entry! Please enter the number associated with the "
