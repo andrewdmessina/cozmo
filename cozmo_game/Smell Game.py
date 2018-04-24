@@ -88,6 +88,8 @@ def play_game():
                  "colors. \n\nWhen the right color for the smell appears, they need to tap their " \
                  "cube as fast as possible!"
 
+    game_over = "Woohoo! Great game! You'll be returning to the main menu."
+
     # main greeting
     print(greeting)
     print(rules_overview)
@@ -149,9 +151,11 @@ def play_game():
     # assign results of each smell game to one of the score variables
     # cozmo_score, player1_score, player2_score (declared above)
 
+    print(game_over)
+    input(pause)
+
     return
 
-def play_again()
 
 # ---------------------- Main Cozmo API definition ---------------------- #
 def cozmo_program(robot: cozmo.robot.Robot):
@@ -178,7 +182,6 @@ def cozmo_program(robot: cozmo.robot.Robot):
         # Start user input validation loop
         if select == 1:
             play_game()
-            play_again()
         elif select == "Q" or select == "q":
             flag = -1
         else:
