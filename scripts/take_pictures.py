@@ -24,8 +24,8 @@ def cozmo_program(robot: cozmo.robot.Robot):
     print("Done: Taking images")
 
 def tf_cozmo_program(robot: cozmo.robot.Robot):
-    robot.set_head_angle(degrees(10.0)).wait_for_completed()
-    robot.set_lift_height(0.0).wait_for_completed()
+    #robot.set_head_angle(degrees(10.0)).wait_for_completed()
+    #robot.set_lift_height(0.0).wait_for_completed()
     global directory
     if not os.path.exists('images'):
         os.makedirs('images')
