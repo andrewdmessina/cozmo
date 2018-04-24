@@ -12,10 +12,10 @@ purple = (Color(name="purple", int_color=0xb000ffff))
 purple_light = Light(on_color=purple, off_color=purple)  # Internal bug, the two must match
 
 smells = {
-    "Coffee": orange_light,
+    "Coffee": cozmo.lights.red_light, # changed to red
     "Baby Powder": cozmo.lights.blue_light,
     "Citrus": yellow_light,
-    "Cocoa": orange_light,
+    "Vanilla": cozmo.lights.white_light, # changed to white
     "Mint": cozmo.lights.green_light
 }
 

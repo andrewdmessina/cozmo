@@ -41,6 +41,9 @@ import sys
 
 # playGame def -- defines smell game operation and is called by cozmo_program
 def play_game():
+    # Create variables to hold player score
+    cozmo_score, player1_score, player2_score = 0
+
 
     # Save message strings
     pause = "\n\nPress any key to continue..."
@@ -65,7 +68,7 @@ def play_game():
     # To call color, use smell_table[#[smell_name]]
 
     smell_table = {
-        1:{"Coffee":"Orange"},
+        1:{"Coffee" : "Red"},
         2:{"Baby Powder":"Blue"},
         3:{"Citrus" : "Yellow"},
         4:{"Vanilla" : "White"},
@@ -121,9 +124,6 @@ def play_game():
 
             # failure, proceeds to while loop start
 
-
-
-
     # smell validated, display prompts, then pause before start of game
     print(smell_accepted)
     print(smell_prompt)
@@ -135,6 +135,10 @@ def play_game():
     input(pause)
 
     # run color match cube routine
+    color_match = "\nThe game has begun! The smell is: ", smell, "and the color is: ", color
+    print(color_match)
+    input(pause)
+
 
     # cube routine
     # cube routine
@@ -142,12 +146,12 @@ def play_game():
     # cube routine
 
     # store score
-
-
-
+    # assign results of each smell game to one of the score variables
+    # cozmo_score, player1_score, player2_score (declared above)
 
     return
 
+def play_again()
 
 # ---------------------- Main Cozmo API definition ---------------------- #
 def cozmo_program(robot: cozmo.robot.Robot):
@@ -174,6 +178,7 @@ def cozmo_program(robot: cozmo.robot.Robot):
         # Start user input validation loop
         if select == 1:
             play_game()
+            play_again()
         elif select == "Q" or select == "q":
             flag = -1
         else:
