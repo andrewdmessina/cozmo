@@ -1183,7 +1183,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--intermediate_store_frequency',
       type=int,
-      default=0,
+      default=100000,
       help="""\
          How many steps to store intermediate graph. If "0" then will not
          store.\
@@ -1295,7 +1295,7 @@ if __name__ == '__main__':
   )
   parser.add_argument(
       '--flip_left_right',
-      default=False,
+      default=True,
       help="""\
       Whether to randomly flip half of the training images horizontally.\
       """,
@@ -1304,7 +1304,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--random_crop',
       type=int,
-      default=0,
+      default=30,
       help="""\
       A percentage determining how much of a margin to randomly crop off the
       training images.\
@@ -1313,7 +1313,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--random_scale',
       type=int,
-      default=0,
+      default=20,
       help="""\
       A percentage determining how much to randomly scale up the size of the
       training images by.\
@@ -1322,7 +1322,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--random_brightness',
       type=int,
-      default=0,
+      default=20,
       help="""\
       A percentage determining how much to randomly multiply the training image
       input pixels up or down by.\
@@ -1331,7 +1331,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--architecture',
       type=str,
-      default='mobilenet_1.0_224',
+      default='mobilenet_0.25_224',
       help="""\
       Which model architecture to use. 'inception_v3' is the most accurate, but
       also the slowest. For faster or smaller models, chose a MobileNet with the
@@ -1344,6 +1344,5 @@ if __name__ == '__main__':
       """)
   FLAGS, unparsed = parser.parse_known_args()
   should_continue = True
-  #while (should_continue):
-   # take_pictures()
+  take_pictures()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)

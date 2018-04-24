@@ -20,6 +20,9 @@ from __future__ import print_function
 import argparse
 import sys
 import time
+import glob
+import os
+
 
 import numpy as np
 import tensorflow as tf
@@ -70,7 +73,9 @@ def load_labels(label_file):
   return label
 
 if __name__ == "__main__":
-  file_name = take_pictures.tf_picture_taker()
+  take_pictures.tf_picture_taker()
+  list_of_files = glob.glob('images/label/*') # * means all if need specific format then *.csv
+  file_name = max(list_of_files, key=os.path.getctime)
   input_height = 224
   input_width = 224
   input_mean = 128
