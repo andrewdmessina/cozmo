@@ -158,7 +158,7 @@ def play_game():
 
 
 # ---------------------- Main Cozmo API definition ---------------------- #
-def cozmo_program(robot: cozmo.robot.Robot):
+def smell_game(robot: cozmo.robot.Robot):
 
     # robot.say_text("Hello World").wait_for_completed()
 
@@ -192,4 +192,4 @@ def cozmo_program(robot: cozmo.robot.Robot):
     sys.exit()
 
 # Main Cozmo API program call
-cozmo.run_program(cozmo_program)
+cozmo.run_program(smell_game)
