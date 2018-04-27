@@ -37,12 +37,12 @@
 import cozmo
 import pprint
 import sys
-
+from label_image import labe_cozmo_image
 
 # playGame def -- defines smell game operation and is called by cozmo_program
-def play_game():
+def play_game(robot: cozmo.robot.Robot):
     # Create variables to hold player score
-    cozmo_score, player1_score, player2_score = 0
+    cozmo_score, player1_score, player2_score = 0, 0, 0
 
 
     # Save message strings
@@ -96,10 +96,10 @@ def play_game():
     input(pause)
 
     print(choose_prompt)
-    pprint(smell_table)
+    print(smell_table)
 
-    smell = ""
-    color = ""
+    smell, color = "", ""
+    marker = 1
 
     # validate smell id number loop
     while marker == 1:
@@ -108,19 +108,17 @@ def play_game():
         marker = 1  # controls loop
 
         # grab user input
-        smell_id = input("Enter the appropriate id number here: ")
+        smell_id = int(input("Enter the appropriate id number here: "))
 
         # if the string (hopefully a number) input by the user is a member of the smell_table
         # dictionary, then it stores the smell name and its associated color for printing
-        if smell_table.has_key(smell_id) :
+        try:
             smell = smell_table[smell_id]
-            color = smell_table[smell_id[smell]]
-
             #success! so break out of loop
             marker = -1
 
         # else it throws an error
-        else :
+        except ValueError:
             print("Sorry! That's not a valid entry! Please enter the number associated with the "
                 "appropriate smell. ")
 
@@ -130,6 +128,9 @@ def play_game():
     print(smell_accepted)
     print(smell_prompt)
     input(pause)
+    labels, results = labe_cozmo_image(robot)
+    print(labels)
+    print(results)
 
     # display cube rules and prepare to run game
     print(cube_rules)
@@ -180,8 +181,8 @@ def smell_game(robot: cozmo.robot.Robot):
         select = input("Please enter a number or Q:")
 
         # Start user input validation loop
-        if select == 1:
-            play_game()
+        if select == "1":
+            play_game(robot)
         elif select == "Q" or select == "q":
             flag = -1
         else:

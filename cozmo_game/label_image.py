@@ -72,6 +72,61 @@ def load_labels(label_file):
     label.append(l.rstrip())
   return label
 
+def labe_cozmo_image(robot):
+
+  input_height = 240
+  input_width = 320
+  input_mean = 128
+  input_std = 128
+  input_layer = "input"
+  output_layer = "final_result"
+
+  parser = argparse.ArgumentParser()
+  parser.add_argument(
+    "--graph",
+    default='./tmp/output_graph.pb',
+    help="graph/model to be executed"
+  )
+  parser.add_argument(
+    "--labels", 
+    default='./tmp/output_labels.txt',
+    help="name of file containing labels"
+  )
+  args = parser.parse_args()
+
+  if args.graph:
+    model_file = args.graph
+  if args.image:
+    file_name = args.image
+  if args.labels:
+    label_file = args.labels
+
+  graph = load_graph(model_file)
+  have_valid_prediction = False
+  while not have_valid_prediction:
+    take_pictures.tf_cozmo_program(robot)
+    list_of_files = glob.glob('images/label/*') # * means all if need specific format then *.csv
+    file_name = max(list_of_files, key=os.path.getctime)
+    t = read_tensor_from_image_file(file_name,
+                                    input_height=input_height,
+                                    input_width=input_width,
+                                    input_mean=input_mean,
+                                    input_std=input_std)
+    input_name = "import/" + input_layer
+    output_name = "import/" + output_layer
+    input_operation = graph.get_operation_by_name(input_name)
+    output_operation = graph.get_operation_by_name(output_name)
+
+    with tf.Session(graph=graph) as sess
+      results = sess.run(output_operation.outputs[0],
+                        {input_operation.outputs[0]: t})
+    results = np.squeeze(results)
+
+    top_k = results.argsort()[-5:][::-1]
+    labels = load_labels(label_file)
+  return labels, results
+
+
 if __name__ == "__main__":
   take_pictures.tf_picture_taker()
   list_of_files = glob.glob('images/label/*') # * means all if need specific format then *.csv

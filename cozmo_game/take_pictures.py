@@ -26,6 +26,7 @@ def tf_cozmo_program(robot: cozmo.robot.Robot):
     robot.set_head_angle(degrees(10.0)).wait_for_completed()
     robot.set_lift_height(0.0).wait_for_completed()
     global directory
+    directory = "label"
     if not os.path.exists('images'):
         os.makedirs('images')
     if not os.path.exists('images/' + directory):
@@ -42,8 +43,3 @@ def take_pictures():
         print("Cozmo will take pictures for 10 seconds, please rotate him around the object in order to get the best predictions")
         input("Press enter to continue when you are ready")
         cozmo.run_program(cozmo_program, use_viewer=True, force_viewer_on_top=True)
-
-def tf_picture_taker():
-    global directory, rtValue
-    directory = "label"
-    cozmo.run_program(tf_cozmo_program, use_viewer=True, force_viewer_on_top=False)
