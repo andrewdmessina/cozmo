@@ -23,7 +23,6 @@ import time
 import glob
 import os
 
-
 import numpy as np
 import tensorflow as tf
 import take_pictures
@@ -74,36 +73,18 @@ def load_labels(label_file):
 
 def labe_cozmo_image(robot):
 
-  input_height = 240
-  input_width = 320
+  input_height = 224
+  input_width = 224
   input_mean = 128
   input_std = 128
   input_layer = "input"
   output_layer = "final_result"
-
-  parser = argparse.ArgumentParser()
-  parser.add_argument(
-    "--graph",
-    default='./tmp/output_graph.pb',
-    help="graph/model to be executed"
-  )
-  parser.add_argument(
-    "--labels", 
-    default='./tmp/output_labels.txt',
-    help="name of file containing labels"
-  )
-  args = parser.parse_args()
-
-  if args.graph:
-    model_file = args.graph
-  if args.image:
-    file_name = args.image
-  if args.labels:
-    label_file = args.labels
+  model_file = './tmp/output_graph.pb'
+  label_file = './tmp/output_labels.txt'
 
   graph = load_graph(model_file)
-  have_valid_prediction = False
-  while not have_valid_prediction:
+
+  while True:
     take_pictures.tf_cozmo_program(robot)
     list_of_files = glob.glob('images/label/*') # * means all if need specific format then *.csv
     file_name = max(list_of_files, key=os.path.getctime)
@@ -117,18 +98,19 @@ def labe_cozmo_image(robot):
     input_operation = graph.get_operation_by_name(input_name)
     output_operation = graph.get_operation_by_name(output_name)
 
-    with tf.Session(graph=graph) as sess
+    with tf.Session(graph=graph) as sess:
       results = sess.run(output_operation.outputs[0],
                         {input_operation.outputs[0]: t})
     results = np.squeeze(results)
 
     top_k = results.argsort()[-5:][::-1]
     labels = load_labels(label_file)
-  return labels, results
+    if labels[0] != 'junk':
+        return labels, results
 
 
 if __name__ == "__main__":
-  take_pictures.tf_picture_taker()
+  take_pictures.label_image()
   list_of_files = glob.glob('images/label/*') # * means all if need specific format then *.csv
   file_name = max(list_of_files, key=os.path.getctime)
   input_height = 224

@@ -37,42 +37,54 @@
 import cozmo
 import pprint
 import sys
+import asyncio
+from cozmo.lights import Light, Color
+from random import choice
 from label_image import labe_cozmo_image
-
+orange = (Color(name="orange", int_color=0xffab41ff))
+orange_light = Light(on_color=orange, off_color=orange)  # Internal bug, the two must match
+yellow = (Color(name="yellow", int_color=0xfdff00ff))
+yellow_light = Light(on_color=yellow, off_color=yellow)  # Internal bug, the two must match
+purple = (Color(name="purple", int_color=0xb000ffff))
+purple_light = Light(on_color=purple, off_color=purple)  # Internal bug, the two must match
+smells = {
+    "Coffee": cozmo.lights.red_light, # changed to red
+    "Baby Powder": cozmo.lights.blue_light,
+    "Citrus": cozmo.lights.green_light,
+    "Vanilla": cozmo.lights.white_light, # changed to white
+    "Mint": cozmo.lights.green_light
+}
+players = {  # Decided at runtime, but it may look something like:
+    # "Cozmo": LightCube3
+    # "PlayerOne": LightCube1
+    # "PlayerTwo": LightCube2
+}
 # playGame def -- defines smell game operation and is called by cozmo_program
-def play_game(robot: cozmo.robot.Robot):
+async def play_game(robot: cozmo.robot.Robot):
     # Create variables to hold player score
     cozmo_score, player1_score, player2_score = 0, 0, 0
-
+    robot.world.auto_disconnect_from_cubes_at_end(False)  # Takes a while to connect
+    await robot.world.connect_to_cubes()  # Will be skipped if Cozmo is connected already.
+    look_around = robot.start_behavior(cozmo.behavior.BehaviorTypes.LookAroundInPlace)
 
     # Save message strings
     pause = "\n\nPress any key to continue..."
-
-    greeting = "Excellent choice! Starting the Smelling Game...."
-
-    rules_overview = "The rules are simple. Up to two humans can compete with Cozmo in this game."\
-                 "\n\nYou will choose a smell from the container and enter it's smell id number"\
-                 " when prompted. \n\nWhen ready, you'll pass around the smell jar to both " \
-                 "human players and Cozmo. Wait till you hear him make a sniffing noise, " \
-                 "then follow the onscreen prompts again. \n\nWhen prompted, place the  Cozmo " \
-                 "blocks in front of all the players (including Cozmo!). When you " \
-                 "trigger the game, the Cozmo Cubes will start to change color. When " \
-                 "the right color appears, then the players should hit their " \
-                 "cube!\n\nWhoever hits their cube on the right color first wins!\n\nThat's it!"
 
     choose_prompt = "Please select a smell container from the bin. Check its smell id number and " \
                     "compare it to the list below. \n"
 
     # Smell Table - a dictionary of dictionaries of dictionaries
-    # To call smell, use smell_table[#]
-    # To call color, use smell_table[#[smell_name]]
-
     smell_table = {
-        1:{"Coffee" : "Red"},
-        2:{"Baby Powder":"Blue"},
-        3:{"Citrus" : "Yellow"},
-        4:{"Vanilla" : "White"},
-        5:{"Mint":"Green"}
+        1:{ 'Smell' : "Coffee",
+            'Color' : "Red"},
+        2:{ 'Smell' : "Baby Powder",
+            'Color' : "Blue"},
+        3:{ 'Smell' : "Citrus", 
+            'Color' : "Yellow"},
+        4:{ 'Smell' : "Vanilla",
+            'Color' : "White"},
+        5:{ 'Smell' : "Mint",
+            'Color' : "Green"}
     }
 
     smell_accepted = "Excellent!"
@@ -91,8 +103,16 @@ def play_game(robot: cozmo.robot.Robot):
     game_over = "Woohoo! Great game! You'll be returning to the main menu."
 
     # main greeting
-    print(greeting)
-    print(rules_overview)
+    print("Excellent choice! Starting the Smelling Game...."\
+                "\nThe rules are simple. Up to two humans can compete with Cozmo in this game."\
+                 "\n\nYou will choose a smell from the container and enter it's smell id number"\
+                 " when prompted. \n\nWhen ready, you'll pass around the smell jar to both " \
+                 "human players and Cozmo. Wait till you hear him make a sniffing noise, " \
+                 "then follow the onscreen prompts again. \n\nWhen prompted, place the  Cozmo " \
+                 "blocks in front of all the players (including Cozmo!). When you " \
+                 "trigger the game, the Cozmo Cubes will start to change color. When " \
+                 "the right color appears, then the players should hit their " \
+                 "cube!\n\nWhoever hits their cube on the right color first wins!\n\nThat's it!")
     input(pause)
 
     print(choose_prompt)
@@ -128,38 +148,53 @@ def play_game(robot: cozmo.robot.Robot):
     print(smell_accepted)
     print(smell_prompt)
     input(pause)
-    labels, results = labe_cozmo_image(robot)
-    print(labels)
-    print(results)
-
-    # display cube rules and prepare to run game
-    print(cube_rules)
-    print(game_prompt)
-    input(pause)
-
-    # run color match cube routine
-    color_match = "\nThe game has begun! The smell is: ", smell, "and the color is: ", color
-    print(color_match)
-    input(pause)
 
 
-    # cube routine
-    # cube routine
-    # cube routine
-    # cube routine
 
-    # store score
-    # assign results of each smell game to one of the score variables
-    # cozmo_score, player1_score, player2_score (declared above)
+    try:
+        players["cozmo"] = await robot.world.wait_for_observed_light_cube(timeout=60)
+    except asyncio.TimeoutError:
+        robot.say_text("SOILED IT")
+    finally:
+        look_around.stop()
+        #robot.say_text("I'M READY").wait_for_completed()
 
-    print(game_over)
-    input(pause)
+    #  Set the players with their cubes.
+    players["one"] = choice([x for x in list(robot.world.light_cubes.values()) if x not in list(players.values())])
+    players["two"] = choice([x for x in list(robot.world.light_cubes.values()) if x not in list(players.values())])
+    #labels, results = labe_cozmo_image(robot)
+    #print(labels)
+    #print(results)
 
-    return
+
+
+
+class GameCube(cozmo.objects.LightCube):
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        self._cycle = None
+
+    def start_light_cycle(self):
+        if self._cycle:
+            raise ValueError("Light cycle already running")
+
+        async def _cycle():
+            while True:
+                for color in smells.values():
+                    players["cozmo"].set_lights(color)
+                    players["one"].set_lights(color)
+                    players["two"].set_lights(color)
+                    await asyncio.sleep(0.5, loop=self._loop)
+        self._cycle = asyncio.ensure_future(_cycle(), loop=self._loop)
+
+    def stop_light_cycle(self):
+        if self._cycle:
+            self._cycle.cancel()
+            self._cycle = None
 
 
 # ---------------------- Main Cozmo API definition ---------------------- #
-def smell_game(robot: cozmo.robot.Robot):
+async def smell_game(robot: cozmo.robot.Robot):
 
     # robot.say_text("Hello World").wait_for_completed()
 
@@ -182,7 +217,7 @@ def smell_game(robot: cozmo.robot.Robot):
 
         # Start user input validation loop
         if select == "1":
-            play_game(robot)
+            await play_game(robot)
         elif select == "Q" or select == "q":
             flag = -1
         else:
