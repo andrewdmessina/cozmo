@@ -3,16 +3,15 @@ from cozmo.util import degrees
 import time
 import sys
 import os
+import asyncio
 imageNumber = 200
-def on_new_camera_image(evt, **kwargs):
+async def on_new_camera_image(evt, **kwargs):
     print("here", directory)
     pilImage = kwargs['image'].raw_image
     pilImage.save("images/" + directory + "/" + directory + "-2%d.jpg" % kwargs['image'].image_number, "JPEG")
 
 
 def cozmo_program(robot: cozmo.robot.Robot):
-    robot.set_head_angle(degrees(10.0)).wait_for_completed()
-    robot.set_lift_height(0.0).wait_for_completed()
     robot.set_head_light(enable=True)
     global directory
     if not os.path.exists('images'):
@@ -24,25 +23,23 @@ def cozmo_program(robot: cozmo.robot.Robot):
     robot.set_head_light(False)
     print("Done: Taking images")
 
-def tf_cozmo_program(robot: cozmo.robot.Robot):
+async def tf_cozmo_program(robot: cozmo.robot.Robot):
     robot.set_head_light(enable=True)
-    robot.set_head_angle(degrees(10.0)).wait_for_completed()
-    robot.set_lift_height(0.0).wait_for_completed()
-    time.sleep(.1)
+    await robot.set_head_angle(degrees(10.0)).wait_for_completed()
+    await robot.set_lift_height(0.0).wait_for_completed()
+    time.sleep(1)
     global directory
     directory = "label"
-    if not os.path.exists('images'):
-        os.makedirs('images')
-    if not os.path.exists('images/' + directory):
-        os.makedirs('images/' + directory)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     robot.add_event_handler(cozmo.world.EvtNewCameraImage, on_new_camera_image)
-    time.sleep(.1)
+    time.sleep(1)
     robot.set_head_light(False)
 
 def label_image():
     cozmo.run_program(tf_cozmo_program, use_viewer=True, force_viewer_on_top=True)
 
-def take_pictures():
+if __name__ == '__main__':
     while (True):
         global directory
         directory = input("Please enter object name:\n")

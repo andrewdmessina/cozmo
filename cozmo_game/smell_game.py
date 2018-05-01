@@ -40,7 +40,7 @@ import sys
 import asyncio
 from cozmo.lights import Light, Color
 from random import choice
-from label_image import labe_cozmo_image
+from label_image import label_cozmo_image
 from time import sleep
 orange = (Color(name="orange", int_color=0xffab41ff))
 orange_light = Light(on_color=orange, off_color=orange)  # Internal bug, the two must match
@@ -196,6 +196,8 @@ cozmo.world.World.light_cube_factory = GameCube
 
 # ---------------------- Main Cozmo API definition ---------------------- #
 async def smell_game(robot: cozmo.robot.Robot):
+    await label_cozmo_image(robot)
+    """
     robot.world.auto_disconnect_from_cubes_at_end(False)  # Takes a while to connect
     await robot.world.connect_to_cubes()  # Will be skipped if Cozmo is connected already.
     # robot.say_text("Hello World").wait_for_completed()
@@ -228,6 +230,7 @@ async def smell_game(robot: cozmo.robot.Robot):
     print("Thanks for playing! Closing App...")
     input("\n\nPress any key to exit. You can always reload from the desktop!")
     sys.exit()
+    """
 
 # Main Cozmo API program call
 cozmo.run_program(smell_game)
