@@ -41,6 +41,7 @@ import asyncio
 from cozmo.lights import Light, Color
 from random import choice
 from label_image import labe_cozmo_image
+from time import sleep
 orange = (Color(name="orange", int_color=0xffab41ff))
 orange_light = Light(on_color=orange, off_color=orange)  # Internal bug, the two must match
 yellow = (Color(name="yellow", int_color=0xfdff00ff))
@@ -59,13 +60,12 @@ players = {  # Decided at runtime, but it may look something like:
     # "PlayerOne": LightCube1
     # "PlayerTwo": LightCube2
 }
+
 # playGame def -- defines smell game operation and is called by cozmo_program
 async def play_game(robot: cozmo.robot.Robot):
     # Create variables to hold player score
     cozmo_score, player1_score, player2_score = 0, 0, 0
-    robot.world.auto_disconnect_from_cubes_at_end(False)  # Takes a while to connect
-    await robot.world.connect_to_cubes()  # Will be skipped if Cozmo is connected already.
-    look_around = robot.start_behavior(cozmo.behavior.BehaviorTypes.LookAroundInPlace)
+
 
     # Save message strings
     pause = "\n\nPress any key to continue..."
@@ -150,15 +150,15 @@ async def play_game(robot: cozmo.robot.Robot):
     input(pause)
 
 
-
+    look_around = robot.start_behavior(cozmo.behavior.BehaviorTypes.LookAroundInPlace)
     try:
-        players["cozmo"] = await robot.world.wait_for_observed_light_cube(timeout=60)
+        players["cozmo"] = await robot.world.wait_for_observed_light_cube(timeout=60.0)
     except asyncio.TimeoutError:
         robot.say_text("SOILED IT")
     finally:
         look_around.stop()
         #robot.say_text("I'M READY").wait_for_completed()
-
+    
     #  Set the players with their cubes.
     players["one"] = choice([x for x in list(robot.world.light_cubes.values()) if x not in list(players.values())])
     players["two"] = choice([x for x in list(robot.world.light_cubes.values()) if x not in list(players.values())])
@@ -191,11 +191,13 @@ class GameCube(cozmo.objects.LightCube):
         if self._cycle:
             self._cycle.cancel()
             self._cycle = None
+cozmo.world.World.light_cube_factory = GameCube
 
 
 # ---------------------- Main Cozmo API definition ---------------------- #
 async def smell_game(robot: cozmo.robot.Robot):
-
+    robot.world.auto_disconnect_from_cubes_at_end(False)  # Takes a while to connect
+    await robot.world.connect_to_cubes()  # Will be skipped if Cozmo is connected already.
     # robot.say_text("Hello World").wait_for_completed()
 
     # Welcome user
