@@ -61,15 +61,33 @@ players = {  # Decided at runtime, but it may look something like:
     # "PlayerTwo": LightCube2
 }
 
-# playGame def -- defines smell game operation and is called by cozmo_program
+
+# Save message strings (used by both smell_demo and play_game
+pause = "\n\nPress any key to continue..."
+
+#smell_demo def -- defines smell demonstration, without engaging the game
+async def smell_demo(robot: cozmo.robot.Robot):
+
+    '''
+    Label_images should already be called and Cozmo should already be able to detect and
+    respond to recognized IR patches. This module merely wraps that behavior in a set of user
+    prompts.
+    '''
+    
+    print("Welcome to the Smell Demonstration! Please select a scent container and position it "
+          "label-side towards Cozmo. \nWhen he's finished smelling that container, you will be "
+          "returned to the main menu. \nTo smell again, please select the Smell Demonstration "
+          "option.")
+
+    print(pause)
+
+# play_game def -- defines smell game operation and is called by cozmo_program
 async def play_game(robot: cozmo.robot.Robot):
     # Create variables to hold player score
     cozmo_score, player1_score, player2_score = 0, 0, 0
 
 
-    # Save message strings
-    pause = "\n\nPress any key to continue..."
-
+    # Saved Message Strings
     choose_prompt = "Please select a smell container from the bin. Check its smell id number and " \
                     "compare it to the list below. \n"
 
@@ -197,7 +215,7 @@ cozmo.world.World.light_cube_factory = GameCube
 # ---------------------- Main Cozmo API definition ---------------------- #
 async def smell_game(robot: cozmo.robot.Robot):
     await label_cozmo_image(robot)
-    """
+
     robot.world.auto_disconnect_from_cubes_at_end(False)  # Takes a while to connect
     await robot.world.connect_to_cubes()  # Will be skipped if Cozmo is connected already.
     # robot.say_text("Hello World").wait_for_completed()
@@ -213,7 +231,7 @@ async def smell_game(robot: cozmo.robot.Robot):
         # Main Menu display
         print("Main Menu:")
         print("1\tSmell Game")
-        # print("2\tSmell Demonstration")
+        print("2\tSmell Demonstration")
         print("Q\tQuit")
 
         # Get user input
@@ -222,6 +240,8 @@ async def smell_game(robot: cozmo.robot.Robot):
         # Start user input validation loop
         if select == "1":
             await play_game(robot)
+        elif select == 2:
+            await smell_demo(robot)
         elif select == "Q" or select == "q":
             flag = -1
         else:
@@ -230,7 +250,7 @@ async def smell_game(robot: cozmo.robot.Robot):
     print("Thanks for playing! Closing App...")
     input("\n\nPress any key to exit. You can always reload from the desktop!")
     sys.exit()
-    """
+
 
 # Main Cozmo API program call
 cozmo.run_program(smell_game)
