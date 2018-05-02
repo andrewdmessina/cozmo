@@ -3,7 +3,7 @@ from random import choice
 from time import sleep
 import asyncio
 from cozmo.lights import Light, Color
-
+from label_image import get_opinon
 orange = (Color(name="orange", int_color=0xffab41ff))
 orange_light = Light(on_color=orange, off_color=orange)  # Internal bug, the two must match
 yellow = (Color(name="yellow", int_color=0xfdff00ff))
@@ -94,6 +94,9 @@ async def cozmo_program(robot: cozmo.robot.Robot):
             print("Time out and start the game from the beginning")
             continue
         finally:
+            # Need to smell
+            opinons = [graph[1][graph[0].index(1)] for graph in get_opinon(robot)]
+            print(opinons)
             players["cozmo"].start_light_cycle()
             players["one"].start_light_cycle()
             players["two"].start_light_cycle()
@@ -118,7 +121,7 @@ async def cozmo_program(robot: cozmo.robot.Robot):
 
 
 cozmo.robot.Robot.drive_off_charger_on_connect = False
-cozmo.run_program(cozmo_program)
+cozmo.run_program(cozmo_program, use_viewer=True, force_viewer_on_top=True)
 #  While not max score
     #  If a block is hit, it's time to play
     #  Turn and check for a smell.

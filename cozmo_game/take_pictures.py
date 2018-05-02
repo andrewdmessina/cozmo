@@ -23,19 +23,18 @@ def cozmo_program(robot: cozmo.robot.Robot):
     if not os.path.exists('images/' + directory):
         copytree("images/template", "images/" + directory)
         os.makedirs('images/' + directory + '/' + directory)
-    robot.add_event_handler(cozmo.world.EvtNewCameraImage, on_new_camera_image)
+    robot.add_event_handler(cozmo.world.EvtNewCameraImage, on_new_camera_image).onceshot()
     time.sleep(1)
     robot.set_head_light(False)
     print("Done: Taking images")
 
 def tf_cozmo_program(robot: cozmo.robot.Robot):
-    time.sleep(.1)
     global directory
-    directory = "images/label"
+    directory = "label"
     if not os.path.exists(directory):
         os.makedirs(directory)
     robot.add_event_handler(cozmo.world.EvtNewCameraImage, on_tf_new_camera_image)
-    time.sleep(5)
+    time.sleep(.1)
     robot.remove_event_handler(cozmo.world.EvtNewCameraImage, on_tf_new_camera_image)
 
 def label_image():
