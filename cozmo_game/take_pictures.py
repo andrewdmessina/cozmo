@@ -5,7 +5,7 @@ import sys
 import os
 import asyncio
 import uuid
-from shutil import copytree
+from shutil import copytree, rmtree
 imageNumber = 200
 def on_new_camera_image(evt, **kwargs):
     print("here", directory)
@@ -31,6 +31,8 @@ def cozmo_program(robot: cozmo.robot.Robot):
 def tf_cozmo_program(robot: cozmo.robot.Robot):
     global directory
     directory = "label"
+    if os.path.exists(directory):
+        rmtree(directory)
     if not os.path.exists(directory):
         os.makedirs(directory)
     robot.add_event_handler(cozmo.world.EvtNewCameraImage, on_tf_new_camera_image)
