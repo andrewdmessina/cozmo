@@ -109,6 +109,7 @@ import tarfile
 import numpy as np
 from six.moves import urllib
 import tensorflow as tf
+import copy
 
 from tensorflow.python.framework import graph_util
 from tensorflow.python.framework import tensor_shape
@@ -1204,7 +1205,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--how_many_training_steps',
       type=int,
-      default=1500,
+      default=500,
       help='How many training steps to run before ending.'
   )
   parser.add_argument(
@@ -1343,6 +1344,15 @@ if __name__ == '__main__':
       for more information on Mobilenet.\
       """)
   FLAGS, unparsed = parser.parse_known_args()
+
   should_continue = True
-  take_pictures()
-  tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
+  #new_labels = take_pictures()
+  new_labels = ["asdf"]
+  for label in new_labels:
+    FLAGS.__dict__["output_labels"] = "./images/" + str(label) + "/output_labels.txt"
+    FLAGS.__dict__["summaries_dir"] =  "./images/" + str(label) + "/retrain_logs"
+    FLAGS.__dict__["image_dir"] = "./images/" + str(label)
+    FLAGS.__dict__["output_graph"] = "./images/" + str(label) + "/output_graph.pb"
+    FLAGS.__dict__["intermediate_output_graphs_dir"] = "./images/" + str(label) + "/intermediate_graph/"
+    print(FLAGS.__dict__)
+    tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)

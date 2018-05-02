@@ -213,9 +213,11 @@ cozmo.world.World.light_cube_factory = GameCube
 
 
 # ---------------------- Main Cozmo API definition ---------------------- #
-async def smell_game(robot: cozmo.robot.Robot):
-    await label_cozmo_image(robot)
-
+def smell_game(robot: cozmo.robot.Robot):
+    robot.set_head_light(enable=True)
+    sleep(1)
+    label_cozmo_image(robot)
+    """
     robot.world.auto_disconnect_from_cubes_at_end(False)  # Takes a while to connect
     await robot.world.connect_to_cubes()  # Will be skipped if Cozmo is connected already.
     # robot.say_text("Hello World").wait_for_completed()
@@ -250,7 +252,7 @@ async def smell_game(robot: cozmo.robot.Robot):
     print("Thanks for playing! Closing App...")
     input("\n\nPress any key to exit. You can always reload from the desktop!")
     sys.exit()
-
+    """
 
 # Main Cozmo API program call
-cozmo.run_program(smell_game)
+cozmo.run_program(smell_game, use_viewer=True, force_viewer_on_top=True)
