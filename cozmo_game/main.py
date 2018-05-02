@@ -61,10 +61,17 @@ def get_opinion() -> {}:
 
 
 async def cozmo_program(robot: cozmo.robot.Robot):
-    #def player_choice(evt, **kw):
-    #    return evt.obj
-    #    robot.remove_event_handler(cozmo.objects.EvtObjectTapped, player_choice)
-    #    robot.abort_all_actions(robot, False)
+    def player_choice(evt, **kw):
+        global players
+        players["cozmo"].stop_light_cycle()
+        players["one"].stop_light_cycle()
+        players["two"].stop_light_cycle()
+        players["cozmo"].set_lights_off()
+        players["one"].set_lights_off()
+        players["two"].set_lights_off()
+        winner = [k for k,v in players.items() if v == evt.obj][0]
+        print(winner)
+        return evt.obj
 
     robot.world.auto_disconnect_from_cubes_at_end(False)  # Takes a while to connect
     await robot.world.connect_to_cubes()  # Will be skipped if Cozmo is connected already.
@@ -101,23 +108,17 @@ async def cozmo_program(robot: cozmo.robot.Robot):
             players["one"].start_light_cycle()
             players["two"].start_light_cycle()
 
-        #robot.add_event_handler(cozmo.objects.EvtObjectTapped, player_choice)
+        robot.add_event_handler(cozmo.objects.EvtObjectTapped, player_choice).oneshot
 
-        try:
-            print("Waiting for player opinion")
-            players["one"].wait_for_tap(timeout=20)
-            players["two"].wait_for_tap(timeout=20)
-            await players["cozmo"].wait_for_tap(timeout=20)
-            print("Cube tapped")
-        except asyncio.TimeoutError:
-            print("Players must have left, restart?")
-        finally:
-            players["cozmo"].stop_light_cycle()
-            players["one"].stop_light_cycle()
-            players["two"].stop_light_cycle()
-            players["cozmo"].set_lights_off()
-            players["one"].set_lights_off()
-            players["two"].set_lights_off()
+        # try:
+        #     print("Waiting for player opinion")
+        #     #players["one"].wait_for_tap(timeout=20)
+        #     #players["two"].wait_for_tap(timeout=20)
+        #     #players["cozmo"].wait_for_tap(timeout=20)
+        #     print("Cube tapped")
+        # except asyncio.TimeoutError:
+        #     print("Players must have left, restart?")
+        # finally:
 
 
 cozmo.robot.Robot.drive_off_charger_on_connect = False
