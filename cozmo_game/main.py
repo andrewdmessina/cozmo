@@ -62,6 +62,7 @@ def get_opinion() -> {}:
 
 async def cozmo_program(robot: cozmo.robot.Robot):
     def player_choice(evt, **kw):
+        print("inside event handler")
         global players
         players["cozmo"].stop_light_cycle()
         players["one"].stop_light_cycle()
@@ -109,7 +110,7 @@ async def cozmo_program(robot: cozmo.robot.Robot):
             players["two"].start_light_cycle()
 
         robot.add_event_handler(cozmo.objects.EvtObjectTapped, player_choice).oneshot
-
+        await robot.wait_for(cozmo.objects.EvtObjectTapped)
         # try:
         #     print("Waiting for player opinion")
         #     #players["one"].wait_for_tap(timeout=20)
