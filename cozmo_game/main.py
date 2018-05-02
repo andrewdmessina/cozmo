@@ -93,24 +93,25 @@ async def cozmo_program(robot: cozmo.robot.Robot):
 
     # def cube_tapped2(evt, **kw):
     #     print("Interest\ning")
-    while True:
+    for x in range(1):
+        robot.go_to_object(players["cozmo"], distance_from_object=cozmo.util.Distance(30)).wait_for_completed()
+        robot.set_lift_height(100, in_parallel=True).wait_for_completed()
+        print("Waiting for cozmo to think")
+        opinons = [graph[1][graph[0].index(1)] for graph in await get_opinon(robot)]
+        print("Cozmo has an opinion")
+        await players["cozmo"].wait_for_tap(timeout=10)
+        print(opinons)
+        players["cozmo"].start_light_cycle()
+        players["one"].start_light_cycle()
+        players["two"].start_light_cycle()
+
         try:
-            print("Waiting for game start")
-            await players["cozmo"].wait_for_tap(timeout=10)
-            print("Game started")
+            winner = await robot.wait_for(cozmo.objects.EvtObjectTapped)
         except asyncio.TimeoutError:
-            print("Time out and start the game from the beginning")
             continue
         finally:
-            # Need to smell
-            opinons = [graph[1][graph[0].index(1)] for graph in get_opinon(robot)]
-            print(opinons)
-            players["cozmo"].start_light_cycle()
-            players["one"].start_light_cycle()
-            players["two"].start_light_cycle()
+            print(winner.obj)
 
-        robot.add_event_handler(cozmo.objects.EvtObjectTapped, player_choice).oneshot
-        await robot.wait_for(cozmo.objects.EvtObjectTapped)
         # try:
         #     print("Waiting for player opinion")
         #     #players["one"].wait_for_tap(timeout=20)

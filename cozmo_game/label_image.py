@@ -71,8 +71,8 @@ def load_labels(label_file):
     label.append(l.rstrip())
   return label
 
-def get_opinon(robot):
-    take_pictures.tf_cozmo_program(robot)
+async def get_opinon(robot):
+    await take_pictures.tf_cozmo_program(robot)
     rt_value = []
     input_height = 224
     input_width = 224

@@ -213,10 +213,10 @@ cozmo.world.World.light_cube_factory = GameCube
 
 
 # ---------------------- Main Cozmo API definition ---------------------- #
-def smell_game(robot: cozmo.robot.Robot):
+async def smell_game(robot: cozmo.robot.Robot):
     robot.set_head_light(enable=True)
     sleep(1)
-    get_opinon(robot)
+    await get_opinon(robot)
     """
     robot.world.auto_disconnect_from_cubes_at_end(False)  # Takes a while to connect
     await robot.world.connect_to_cubes()  # Will be skipped if Cozmo is connected already.
