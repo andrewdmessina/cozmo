@@ -26,7 +26,7 @@ def cozmo_program(robot: cozmo.robot.Robot):
         copytree("images/template", "images/" + directory)
         os.makedirs('images/' + directory + '/' + directory)
     robot.add_event_handler(cozmo.world.EvtNewCameraImage, on_new_camera_image)
-    time.sleep(1)
+    time.sleep(10)
     robot.set_head_light(False)
     print("Done: Taking images")
 

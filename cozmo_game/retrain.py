@@ -1346,8 +1346,7 @@ if __name__ == '__main__':
   FLAGS, unparsed = parser.parse_known_args()
 
   should_continue = True
-  #new_labels = take_pictures()
-  new_labels = ["asdf"]
+  new_labels = take_pictures()
   for label in new_labels:
     FLAGS.__dict__["output_labels"] = "./images/" + str(label) + "/output_labels.txt"
     FLAGS.__dict__["summaries_dir"] =  "./images/" + str(label) + "/retrain_logs"
