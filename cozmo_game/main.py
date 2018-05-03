@@ -61,6 +61,7 @@ def get_opinion() -> {}:
 
 
 async def cozmo_program(robot: cozmo.robot.Robot):
+    robot.set_head_light(enable=True)
     def player_choice(evt, **kw):
         print("inside event handler")
         global players
@@ -90,16 +91,34 @@ async def cozmo_program(robot: cozmo.robot.Robot):
     #  Set the players with their cubes.
     players["one"] = choice([x for x in list(robot.world.light_cubes.values()) if x not in list(players.values())])
     players["two"] = choice([x for x in list(robot.world.light_cubes.values()) if x not in list(players.values())])
-
+    score = {
+        'cozmo': 0,
+        'player1': 0,
+        'player2': 0
+    }
     # def cube_tapped2(evt, **kw):
     #     print("Interest\ning")
+    await robot.set_lift_height(1).wait_for_completed()
+    await robot.go_to_object(players["cozmo"], distance_from_object=cozmo.util.Distance(35)).wait_for_completed()
+
+
     for x in range(1):
-        robot.go_to_object(players["cozmo"], distance_from_object=cozmo.util.Distance(30)).wait_for_completed()
-        robot.set_lift_height(100, in_parallel=True).wait_for_completed()
-        print("Waiting for cozmo to think")
-        opinons = [graph[1][graph[0].index(1)] for graph in await get_opinon(robot)]
+        await robot.drive_straight(cozmo.util.distance_mm(-10), cozmo.util.speed_mmps(50)).wait_for_completed()
+        print("Waiting for cozmo to smell")
+        await robot.turn_in_place(cozmo.util.degrees(90)).wait_for_completed()
+        await robot.set_head_angle(cozmo.util.degrees(5)).wait_for_completed()
+        have_valid_picture = False
+        while not have_valid_picture:
+            opinons = [graph[1][graph[0].index(1)] for graph in await get_opinon(robot)]
+            if len(set(opinons)) == 2:
+                have_valid_picture = True
+        await robot.turn_in_place(cozmo.util.degrees(-90)).wait_for_completed()
+        await robot.drive_straight(cozmo.util.distance_mm(10), cozmo.util.speed_mmps(50)).wait_for_completed()
+        await robot.say_text("Ready to play").wait_for_completed()
+        #await robot.set_lift_height(.4, 50).wait_for_completed()
+        #await robot.set_lift_height(1).wait_for_completed()
         print("Cozmo has an opinion")
-        await players["cozmo"].wait_for_tap(timeout=10)
+
         print(opinons)
         players["cozmo"].start_light_cycle()
         players["one"].start_light_cycle()
@@ -107,6 +126,8 @@ async def cozmo_program(robot: cozmo.robot.Robot):
 
         try:
             winner = await robot.wait_for(cozmo.objects.EvtObjectTapped)
+            print(winner)
+            print(players.keys()[players.values()[winner]])
         except asyncio.TimeoutError:
             continue
         finally:
